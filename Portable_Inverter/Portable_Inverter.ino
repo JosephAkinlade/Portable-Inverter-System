@@ -47,7 +47,9 @@ void Display_Page1(void)
   lcd.setCursor(0,0);
   lcd.print("Total Units:");
   lcd.setCursor(0,1);
-  lcd.print("Units left:");  
+  lcd.print("Units left:");
+  lcd.setCursor(0,2);
+  lcd.print("Battery Level:");  
 }
 
 void Display_Control(void)
