@@ -11,8 +11,19 @@
 SoftwareSerial HC05(2,3); //rx,tx
 LiquidCrystal_I2C lcd(0x27,20,4);
 
-char RxBuffer[4] = {0};
-int units = 0;
+typedef struct
+{
+  int voltage;
+  int current;
+  int power;
+  int energy;
+  int units_recvd;
+  int units_left;
+  int bat_level;
+}param_t;
+
+char RxBuffer[4] = {0};;
+param_t param = {0};
 
 enum DISPLAY_PAGES
 {
@@ -35,25 +46,37 @@ void Display_Page0(void)
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Voltage:");
+  lcd.setCursor(8,0);
+  DisplayAlignedThreeDigits(param.voltage);
   lcd.setCursor(0,1);
   lcd.print("Current:");
+  lcd.setCursor(8,1);
+  DisplayAlignedTwoDigits(param.current);
   lcd.setCursor(0,2);
   lcd.print("Power:");
+  lcd.setCursor(6,2);
+  DisplayAlignedThreeDigits(param.power);
   lcd.setCursor(0,3);
   lcd.print("KwH used:");
+  lcd.setCursor(9,3);
+  DisplayAlignedThreeDigits(param.energy);
 }
 
 void Display_Page1(void)
 {
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Total Units:");
-  lcd.setCursor(13,0);
-  DisplayAlignedThreeDigits(units);
+  lcd.print("Units Received:");
+  lcd.setCursor(15,0);
+  DisplayAlignedThreeDigits(param.units_recvd);
   lcd.setCursor(0,1);
   lcd.print("Units left:");
+  lcd.setCursor(11,1);
+  DisplayAlignedThreeDigits(param.units_left);
   lcd.setCursor(0,2);
-  lcd.print("Battery Level:");  
+  lcd.print("Battery Level:"); 
+  lcd.setCursor(14,2);
+  DisplayAlignedThreeDigits(param.bat_level); 
 }
 
 static int ConvStrToInt(char* str,int len)
@@ -67,6 +90,18 @@ static int ConvStrToInt(char* str,int len)
   return integer;
 }
 
+static void DisplayAlignedTwoDigits(int val)
+{
+  if(val < 10)
+  {
+    lcd.print('0');
+    lcd.print(val);
+  }
+  else
+  {
+    lcd.print(val);  
+  }
+}
 static void DisplayAlignedThreeDigits(int val)
 {
   if(val < 10)
@@ -87,19 +122,20 @@ static void DisplayAlignedThreeDigits(int val)
 
 void Update_Units(char* str)
 {
-  Serial.println(str);
-  units = ConvStrToInt(str, strlen(str));
-  Serial.println(units);
+  param.units_recvd = ConvStrToInt(str, strlen(str));
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Total Units:");
-  lcd.setCursor(13,0);
-  DisplayAlignedThreeDigits(units);
+  lcd.print("Units Received:");
+  lcd.setCursor(15,0);
+  DisplayAlignedThreeDigits(param.units_recvd);
   lcd.setCursor(0,1);
   lcd.print("Units left:");
+  lcd.setCursor(11,1);
+  DisplayAlignedThreeDigits(param.units_left);
   lcd.setCursor(0,2);
-  lcd.print("Battery Level:");  
-  lcd.setCursor(13,0);
+  lcd.print("Battery Level:"); 
+  lcd.setCursor(14,2);
+  DisplayAlignedThreeDigits(param.bat_level);
   memset(RxBuffer, 0, 4);
 }
 
