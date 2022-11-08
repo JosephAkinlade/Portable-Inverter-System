@@ -36,7 +36,7 @@ void loop()
    }
 
    float power = pzem.power();
-   if(current != NAN)
+   if(power != NAN)
    {
      Serial.print("Power: ");
      Serial.print(power);
@@ -48,7 +48,7 @@ void loop()
    }
 
    float energy = pzem.energy();
-   if(current != NAN)
+   if(energy != NAN)
    {
      Serial.print("Energy: ");
      Serial.print(energy,3);
@@ -60,7 +60,7 @@ void loop()
    }
 
    float frequency = pzem.frequency();
-   if(current != NAN)
+   if(frequency != NAN)
    {
      Serial.print("Frequency: ");
      Serial.print(frequency, 1);
@@ -72,7 +72,7 @@ void loop()
    }
 
    float pf = pzem.pf();
-   if(current != NAN)
+   if(pf != NAN)
    {
      Serial.print("PF: ");
      Serial.println(pf);
