@@ -20,7 +20,7 @@ SoftwareSerial hc05Serial(Pin::hc05Tx,Pin::hc05Rx);
 LiquidCrystal_I2C lcd(0x27,20,4);
 PZEM004Tv30 pzem(pzemSerial);
 HC05 hc05(&hc05Serial);
-HMI hmi(&lcd);
+HMI hmi(lcd);
 
 param_t param = {0};
 

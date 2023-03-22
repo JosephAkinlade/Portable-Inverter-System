@@ -1,10 +1,9 @@
 #include <Arduino.h>
 #include "hmi.h"
 
-HMI::HMI(LiquidCrystal_I2C* lcdPtr)
+HMI::HMI(LiquidCrystal_I2C& lcdRef) : lcdRef(lcdRef)
 {
   //Initialize private variables
-  this->lcdPtr = lcdPtr;
   pageDisplayed = PAGE1;
   dispTimer = millis();
 }
@@ -37,12 +36,12 @@ void HMI::DisplayAlignedTwoDigits(int val)
 {
   if(val < 10)
   {
-    lcdPtr->print('0');
-    lcdPtr->print(val);
+    lcdRef.print('0');
+    lcdRef.print(val);
   }
   else
   {
-    lcdPtr->print(val);  
+    lcdRef.print(val);  
   }
 }
 
@@ -50,54 +49,54 @@ void HMI::DisplayAlignedThreeDigits(int val)
 {
   if(val < 10)
   {
-    lcdPtr->print("00");
-    lcdPtr->print(val);
+    lcdRef.print("00");
+    lcdRef.print(val);
   }
   else if(val >= 10 && val < 100)
   {
-    lcdPtr->print('0');
-    lcdPtr->print(val);
+    lcdRef.print('0');
+    lcdRef.print(val);
   }
   else
   {
-    lcdPtr->print(val);
+    lcdRef.print(val);
   }  
 }
 
 void HMI::Display_Page1(param_t& param)
 {
-  lcdPtr->clear();
-  lcdPtr->setCursor(0,0);
-  lcdPtr->print("Voltage:");
-  lcdPtr->setCursor(8,0);
+  lcdRef.clear();
+  lcdRef.setCursor(0,0);
+  lcdRef.print("Voltage:");
+  lcdRef.setCursor(8,0);
   HMI::DisplayAlignedThreeDigits(param.volt);
-  lcdPtr->setCursor(0,1);
-  lcdPtr->print("Current:");
-  lcdPtr->setCursor(8,1);
+  lcdRef.setCursor(0,1);
+  lcdRef.print("Current:");
+  lcdRef.setCursor(8,1);
   HMI::DisplayAlignedTwoDigits(param.curr);
-  lcdPtr->setCursor(0,2);
-  lcdPtr->print("Power:");
-  lcdPtr->setCursor(6,2);
+  lcdRef.setCursor(0,2);
+  lcdRef.print("Power:");
+  lcdRef.setCursor(6,2);
   HMI::DisplayAlignedThreeDigits(param.pwr);
-  lcdPtr->setCursor(0,3);
-  lcdPtr->print("KwH used:");
-  lcdPtr->setCursor(9,3);
+  lcdRef.setCursor(0,3);
+  lcdRef.print("KwH used:");
+  lcdRef.setCursor(9,3);
   HMI::DisplayAlignedThreeDigits(param.kwh); 
 }
 
 void HMI::Display_Page2(param_t& param)
 {
-  lcdPtr->clear();
-  lcdPtr->setCursor(0,0);
-  lcdPtr->print("Units Received:");
-  lcdPtr->setCursor(15,0);
+  lcdRef.clear();
+  lcdRef.setCursor(0,0);
+  lcdRef.print("Units Received:");
+  lcdRef.setCursor(15,0);
   HMI::DisplayAlignedThreeDigits(param.units_recvd);
-  lcdPtr->setCursor(0,1);
-  lcdPtr->print("Units left:");
-  lcdPtr->setCursor(11,1);
+  lcdRef.setCursor(0,1);
+  lcdRef.print("Units left:");
+  lcdRef.setCursor(11,1);
   HMI::DisplayAlignedThreeDigits(param.units_left);
-  lcdPtr->setCursor(0,2);
-  lcdPtr->print("Battery Level:"); 
-  lcdPtr->setCursor(14,2);
+  lcdRef.setCursor(0,2);
+  lcdRef.print("Battery Level:"); 
+  lcdRef.setCursor(14,2);
   HMI::DisplayAlignedThreeDigits(param.bat_level);
 }
