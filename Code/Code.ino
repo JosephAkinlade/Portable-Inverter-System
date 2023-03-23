@@ -30,6 +30,17 @@ void setup()
   pinMode(Pin::relaySigPin,OUTPUT);
   lcd.init(); // initialize the lcd 
   lcd.backlight();
+  lcd.setCursor(6,0);
+  lcd.print("PORTABLE");
+  lcd.setCursor(6,1);
+  lcd.print("INVERTER");
+  lcd.setCursor(7,2);
+  lcd.print("SYSTEM");
+  delay(3000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("--LOADING...");
+  delay(2000);
   hmi.Display_Page1(param);
 }
 
@@ -48,7 +59,7 @@ void loop()
     Serial.println(hc05.DecodeData());
     hc05.ResetRxBuffer();
   }
-  if(param.units_recvd > 0)
+  if(param.units > 0)
   {
     digitalWrite(Pin::relaySigPin,HIGH);   
   }

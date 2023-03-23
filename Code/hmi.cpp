@@ -67,20 +67,16 @@ void HMI::Display_Page1(param_t& param)
 {
   lcdRef.clear();
   lcdRef.setCursor(0,0);
-  lcdRef.print("Voltage:");
-  lcdRef.setCursor(8,0);
+  lcdRef.print("Voltage(V): ");
   HMI::DisplayAlignedThreeDigits(param.volt);
   lcdRef.setCursor(0,1);
-  lcdRef.print("Current:");
-  lcdRef.setCursor(8,1);
+  lcdRef.print("Current(A): ");
   HMI::DisplayAlignedTwoDigits(param.curr);
   lcdRef.setCursor(0,2);
-  lcdRef.print("Power:");
-  lcdRef.setCursor(6,2);
+  lcdRef.print("Power(W): ");
   HMI::DisplayAlignedThreeDigits(param.pwr);
   lcdRef.setCursor(0,3);
-  lcdRef.print("KwH used:");
-  lcdRef.setCursor(9,3);
+  lcdRef.print("Energy(KWH): ");
   HMI::DisplayAlignedThreeDigits(param.kwh); 
 }
 
@@ -88,15 +84,9 @@ void HMI::Display_Page2(param_t& param)
 {
   lcdRef.clear();
   lcdRef.setCursor(0,0);
-  lcdRef.print("Units Received:");
-  lcdRef.setCursor(15,0);
-  HMI::DisplayAlignedThreeDigits(param.units_recvd);
+  lcdRef.print("Units(KWH): ");
+  HMI::DisplayAlignedThreeDigits(param.units);
   lcdRef.setCursor(0,1);
-  lcdRef.print("Units left:");
-  lcdRef.setCursor(11,1);
-  HMI::DisplayAlignedThreeDigits(param.units_left);
-  lcdRef.setCursor(0,2);
-  lcdRef.print("Battery Level:"); 
-  lcdRef.setCursor(14,2);
+  lcdRef.print("Battery(%): "); 
   HMI::DisplayAlignedThreeDigits(param.bat_level);
 }

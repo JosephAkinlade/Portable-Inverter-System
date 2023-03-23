@@ -8,8 +8,7 @@ typedef struct
   int curr;
   int pwr;
   int kwh;
-  int units_recvd;
-  int units_left;
+  int units;
   int bat_level;
 }param_t;
 
