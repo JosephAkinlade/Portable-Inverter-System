@@ -68,6 +68,7 @@ void setup()
 void loop()
 {
   //Get power parameters and display on LCD
+  pzemSerial.listen();
   param.volt = pzem.voltage();
   param.curr = pzem.current();
   param.pwr = pzem.power();
@@ -75,6 +76,7 @@ void loop()
   hmi.Display_Control(param);
   
   //Receive units from mobile App
+  hc05Serial.listen();
   if(hc05.ReceivedData())
   {
     int RxData = hc05.DecodeData();
