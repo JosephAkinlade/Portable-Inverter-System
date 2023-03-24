@@ -76,15 +76,15 @@ void HMI::Display_Page1(param_t& param)
   lcdRef.print("Power(W): ");
   HMI::DisplayAlignedThreeDigits(param.pwr);
   lcdRef.setCursor(0,3);
-  lcdRef.print("Energy(KWH): ");
-  HMI::DisplayAlignedThreeDigits(param.kwh); 
+  lcdRef.print("Energy(KWh): ");
+  HMI::DisplayAlignedThreeDigits(param.KWh); 
 }
 
 void HMI::Display_Page2(param_t& param)
 {
   lcdRef.clear();
   lcdRef.setCursor(0,0);
-  lcdRef.print("Units(KWH): ");
+  lcdRef.print("Units(KWh): ");
   HMI::DisplayAlignedThreeDigits(param.units);
   lcdRef.setCursor(0,1);
   lcdRef.print("Battery(%): "); 
