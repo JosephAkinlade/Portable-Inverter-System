@@ -19,6 +19,7 @@
 
 #define EEPROM_UNITS  2
 #define ENERGY_USAGE_TIMER_INTERVAL 10000
+#define RESET         0
 
 namespace Pin
 {
@@ -39,6 +40,7 @@ HMI hmi(lcd);
 
 param_t param = {0};
 uint32_t prevEnergyUsageTime;
+uint32_t prevGetPowerParamTime;
 static uint16_t prevKWh;
 
 void setup()
@@ -61,19 +63,25 @@ void setup()
   param.units = EEPROM[EEPROM_UNITS];
   prevKWh = 0;
   prevEnergyUsageTime = 0;
+  prevGetPowerParamTime = 0;
   hmi.Display_Page1(param);
 }
 
 
 void loop()
 {
-  //Get power parameters and display on LCD
-  pzemSerial.listen();
-  param.volt = pzem.voltage();
-  param.curr = pzem.current();
-  param.pwr = pzem.power();
-  param.KWh = pzem.energy() * 1000;
   hmi.Display_Control(param);
+  
+  //Get power parameters
+  if(millis() - prevGetPowerParamTime >= 1500)
+  {
+    pzemSerial.listen();
+    param.volt = pzem.voltage();
+    param.curr = pzem.current();
+    param.pwr = pzem.power();
+    param.KWh = pzem.energy() * 1000;
+    prevGetPowerParamTime = millis();
+  }
   
   //Receive units from mobile App
   hc05Serial.listen();
@@ -82,7 +90,7 @@ void loop()
     int RxData = hc05.DecodeData();
     Serial.print("Received: ");
     Serial.println(RxData);
-    if(RxData == 0xEE)
+    if(RxData == RESET)
     {
       //Clear the available units
       param.units = 0;
