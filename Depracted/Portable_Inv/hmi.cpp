@@ -17,7 +17,7 @@ void HMI::ChangePageDisplayed(void)
 
 void HMI::Display_Control(param_t& param)
 {
-  if((millis() - dispTimer) >= 4000)
+  if((millis() - dispTimer) >= 10000)
   {
     ChangePageDisplayed();
     switch(pageDisplayed)
@@ -68,16 +68,16 @@ void HMI::Display_Page1(param_t& param)
   lcdRef.clear();
   lcdRef.setCursor(0,0);
   lcdRef.print("Voltage(V): ");
-  lcdRef.print(param.volt / 100.0);
+  HMI::DisplayAlignedThreeDigits(param.volt);
   lcdRef.setCursor(0,1);
   lcdRef.print("Current(A): ");
-  lcdRef.print(param.curr / 100.0);
+  HMI::DisplayAlignedTwoDigits(param.curr);
   lcdRef.setCursor(0,2);
   lcdRef.print("Power(W): ");
-  lcdRef.print(param.pwr / 10.0);
+  HMI::DisplayAlignedThreeDigits(param.pwr);
   lcdRef.setCursor(0,3);
   lcdRef.print("Energy(KWh): ");
-  lcdRef.print(param.KWh / 1000.0); 
+  HMI::DisplayAlignedThreeDigits(param.KWh); 
 }
 
 void HMI::Display_Page2(param_t& param)

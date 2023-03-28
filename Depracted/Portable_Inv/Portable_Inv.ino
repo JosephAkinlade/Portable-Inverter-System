@@ -17,8 +17,7 @@
 #include "hmi.h"
 #include "hc05.h"
 
-#define EEPR_UNITS  1
-#define EEPR_KWH    5
+#define EEPROM_UNITS  2
 #define ENERGY_USAGE_TIMER_INTERVAL 10000
 #define RESET         0
 
@@ -44,17 +43,6 @@ uint32_t prevEnergyUsageTime;
 uint32_t prevGetPowerParamTime;
 static uint16_t prevKWh;
 
-void EEPROM_Write2Bytes(int address,uint16_t data)
-{
-  EEPROM.write(address, (data & 0xFF00)>>8);
-  EEPROM.write(address + 1,(data & 0x00FF));
-}
-
-uint16_t EEPROM_Read2Bytes(int address)
-{
-  return (EEPROM[address] % 255 | EEPROM[address + 1] % 255); 
-}
-
 void setup()
 {
   Serial.begin(9600);
@@ -72,8 +60,8 @@ void setup()
   lcd.setCursor(0,0);
   lcd.print("--LOADING...");
   delay(2000);
-  param.units = EEPROM_Read2Bytes(EEPR_UNITS);
-  prevKWh = EEPROM_Read2Bytes(EEPR_KWH);
+  param.units = EEPROM[EEPROM_UNITS];
+  prevKWh = 0;
   prevEnergyUsageTime = 0;
   prevGetPowerParamTime = 0;
   hmi.Display_Page1(param);
@@ -88,9 +76,9 @@ void loop()
   if(millis() - prevGetPowerParamTime >= 1500)
   {
     pzemSerial.listen();
-    param.volt = pzem.voltage() * 100;
-    param.curr = pzem.current() * 100;
-    param.pwr = pzem.power() * 10;
+    param.volt = pzem.voltage();
+    param.curr = pzem.current();
+    param.pwr = pzem.power();
     param.KWh = pzem.energy() * 1000;
     prevGetPowerParamTime = millis();
   }
@@ -104,16 +92,16 @@ void loop()
     Serial.println(RxData);
     if(RxData == RESET)
     {
-      //Clear the available units and reset PZEM's KWh reading
+      //Clear the available units
       param.units = 0;
-      pzem.resetEnergy();
-      EEPROM.write(EEPR_UNITS,param.units);
+      //Add code to clear the KWh reading of the PZEM module
+      EEPROM.write(EEPROM_UNITS,param.units);
     }
     else
     {
       //Add received units to available units
       param.units += RxData;
-      EEPROM_Write2Bytes(EEPR_UNITS,param.units);
+      EEPROM.write(EEPROM_UNITS,param.units);
     }
     Serial.println(param.units);
     hc05.ResetRxBuffer();
@@ -126,9 +114,8 @@ void loop()
     if((param.KWh - prevKWh) >= 1000)
     {
       param.units--;
+      EEPROM.write(EEPROM_UNITS,param.units);
       prevKWh = param.KWh; 
-      EEPROM.write(EEPR_UNITS,param.units);
-      EEPROM_Write2Bytes(EEPR_KWH,prevKWh);
     }
     prevEnergyUsageTime = millis();
   }
