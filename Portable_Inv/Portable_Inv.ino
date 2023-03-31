@@ -106,8 +106,10 @@ void loop()
     {
       //Clear the available units and reset PZEM's KWh reading
       param.units = 0;
+      prevKWh = 0;
       pzem.resetEnergy();
-      EEPROM.write(EEPR_UNITS,param.units);
+      EEPROM_Write2Bytes(EEPR_UNITS,param.units);
+      EEPROM_Write2Bytes(EEPR_KWH,prevKWh);
     }
     else
     {
@@ -127,7 +129,7 @@ void loop()
     {
       param.units--;
       prevKWh = param.KWh; 
-      EEPROM.write(EEPR_UNITS,param.units);
+      EEPROM_Write2Bytes(EEPR_UNITS,param.units);
       EEPROM_Write2Bytes(EEPR_KWH,prevKWh);
     }
     prevEnergyUsageTime = millis();
