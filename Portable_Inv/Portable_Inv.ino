@@ -46,19 +46,24 @@ static uint16_t prevKWh;
 
 void EEPROM_Write2Bytes(int address,uint16_t data)
 {
-  EEPROM.write(address, (data & 0xFF00)>>8);
+  EEPROM.write(address, (data & 0xFF00) >> 8);
   EEPROM.write(address + 1,(data & 0x00FF));
 }
 
 uint16_t EEPROM_Read2Bytes(int address)
 {
-  return (EEPROM[address] % 255 | EEPROM[address + 1] % 255); 
+  return ((EEPROM[address] % 255) << 8 | EEPROM[address + 1] % 255); 
 }
 
 void setup()
 {
   Serial.begin(9600);
   pinMode(Pin::relaySigPin,OUTPUT);
+  param.units = EEPROM_Read2Bytes(EEPR_UNITS);
+  prevKWh = EEPROM_Read2Bytes(EEPR_KWH);
+  Serial.println(prevKWh);
+  prevEnergyUsageTime = 0;
+  prevGetPowerParamTime = 0;
   lcd.init(); // initialize the lcd 
   lcd.backlight();
   lcd.setCursor(6,0);
@@ -72,11 +77,7 @@ void setup()
   lcd.setCursor(0,0);
   lcd.print("--LOADING...");
   delay(2000);
-  param.units = EEPROM_Read2Bytes(EEPR_UNITS);
-  prevKWh = EEPROM_Read2Bytes(EEPR_KWH);
-  prevEnergyUsageTime = 0;
-  prevGetPowerParamTime = 0;
-  hmi.Display_Page1(param);
+  lcd.clear();
 }
 
 
@@ -124,13 +125,18 @@ void loop()
   //Check if it's time to decrement available units
   if(millis() - prevEnergyUsageTime >= ENERGY_USAGE_TIMER_INTERVAL)
   {
+    Serial.print("param.KWh: ");
+    Serial.println(param.KWh);
     //Check if energy usage has increased by 1KWh
     if((param.KWh - prevKWh) >= 1000)
     {
-      param.units--;
-      prevKWh = param.KWh; 
-      EEPROM_Write2Bytes(EEPR_UNITS,param.units);
-      EEPROM_Write2Bytes(EEPR_KWH,prevKWh);
+      if(pzem.voltage() >= 200)
+      {
+        param.units--;
+        prevKWh = param.KWh; 
+        EEPROM_Write2Bytes(EEPR_UNITS,param.units);
+        EEPROM_Write2Bytes(EEPR_KWH,prevKWh);
+      }      
     }
     prevEnergyUsageTime = millis();
   }

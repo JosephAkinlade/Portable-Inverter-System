@@ -4,31 +4,32 @@
 HMI::HMI(LiquidCrystal_I2C& lcdRef) : lcdRef(lcdRef)
 {
   //Initialize private variables
-  pageDisplayed = PAGE1;
+  pageDisplayed = (uint8_t)PAGE2;
   dispTimer = millis();
-}
-
-void HMI::ChangePageDisplayed(void)
-{
-  dispTimer = millis();
-  pageDisplayed ^= PAGE2; 
-
 }
 
 void HMI::Display_Control(param_t& param)
-{
-  if((millis() - dispTimer) >= 4000)
+{   
+  switch(HMI::pageDisplayed)
   {
-    ChangePageDisplayed();
-    switch(pageDisplayed)
-    {
-      case PAGE1:
-        HMI::Display_Page1(param);
-        break;
-      case PAGE2:
-        HMI::Display_Page2(param);
-        break;
-    }
+    case PAGE1:
+      HMI::Display_Page1(param);
+      if(millis() - dispTimer >= 4000)
+      {
+        lcdRef.clear();
+        pageDisplayed = PAGE2;
+        dispTimer = millis();
+      }
+      break;
+    case PAGE2:
+      HMI::Display_Page2(param);
+      if(millis() - dispTimer >= 4000)
+      {
+        lcdRef.clear();
+        pageDisplayed = PAGE1;
+        dispTimer = millis();
+      }
+      break;
   }
 }
 
@@ -65,7 +66,6 @@ void HMI::DisplayAlignedThreeDigits(int val)
 
 void HMI::Display_Page1(param_t& param)
 {
-  lcdRef.clear();
   lcdRef.setCursor(0,0);
   lcdRef.print("Voltage(V): ");
   lcdRef.print(param.volt / 100.0);
@@ -82,7 +82,6 @@ void HMI::Display_Page1(param_t& param)
 
 void HMI::Display_Page2(param_t& param)
 {
-  lcdRef.clear();
   lcdRef.setCursor(0,0);
   lcdRef.print("Units(KWh): ");
   HMI::DisplayAlignedThreeDigits(param.units);

@@ -21,7 +21,7 @@ class HMI
     void DisplayAlignedTwoDigits(int val);
     void DisplayAlignedThreeDigits(int val);
     void ChangePageDisplayed(void);
-    enum DISPLAY_PAGES{PAGE1 = 0, PAGE2};
+    enum DISPLAY_PAGES{PAGE1 = 1, PAGE2 = 2};
 
   public:
     HMI(LiquidCrystal_I2C& lcdRef);
