@@ -14,6 +14,7 @@
 #include <SoftwareSerial.h>
 #include <PZEM004Tv30.h>
 #include <EEPROM.h>
+#include <MapFloat.h>
 #include "hmi.h"
 #include "hc05.h"
 
@@ -29,6 +30,7 @@ namespace Pin
   const uint8_t hc05Tx = 2;
   const uint8_t hc05Rx = 3;
   const uint8_t relaySigPin = 5;
+  const uint8_t batPin = A3;
 };
 
 //Objects
@@ -83,6 +85,10 @@ void setup()
 
 void loop()
 {
+  uint16_t rawVal = analogRead(Pin::batPin);
+  float volt = (rawVal * 5.0) / 1024.0;
+  float inputVolt = ((5.1 + 20) / 5.1) * volt;
+  param.bat_level = mapFloat(inputVolt,11.0,16.5,0,99);
   hmi.Display_Control(param);
   
   //Get power parameters
@@ -143,4 +149,9 @@ void loop()
   
   //Relay control based on available units
   digitalWrite(Pin::relaySigPin, param.units > 0 ? HIGH : LOW);
+  //Overcurrent protection: turn supply off if current > 2.1A
+  if(pzem.current() > 2.1)
+  {
+    digitalWrite(Pin::relaySigPin,HIGH);
+  }
 }
