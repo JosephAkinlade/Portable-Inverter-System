@@ -99,6 +99,11 @@ void loop()
     param.curr = pzem.current() * 100;
     param.pwr = pzem.power() * 10;
     param.KWh = pzem.energy() * 1000;
+    //Overcurrent protection: turn supply off if current > 2.1A
+    if(pzem.current() > 2.1)
+    {
+      digitalWrite(Pin::relaySigPin,HIGH);
+    }
     prevGetPowerParamTime = millis();
   }
   
@@ -149,9 +154,4 @@ void loop()
   
   //Relay control based on available units
   digitalWrite(Pin::relaySigPin, param.units > 0 ? HIGH : LOW);
-  //Overcurrent protection: turn supply off if current > 2.1A
-  if(pzem.current() > 2.1)
-  {
-    digitalWrite(Pin::relaySigPin,HIGH);
-  }
 }
