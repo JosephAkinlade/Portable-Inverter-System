@@ -1,20 +1,20 @@
 # Portable-Inverter-system  
 
-## PZEM-004T module  
-This module is capable of measuring AC current, voltage, real power, power factor, and frequency.  
-Details on how to use this module can be found using the following link: https://www.nn-digital.com/en/blog/tag/pzem-004t-en/  
-For more information on the module (e.g parameter specifications), check the datasheet:  
-https://innovatorsguru.com/wp-content/uploads/2019/06/PZEM-004T-V3.0-Datasheet-User-Manual.pdf  
+This project is the control unit of a portable inverter designed for rental purposes. The control unit includes a mobile interface where the service provider can input energy units into the system. The power supply is automatically cut off when the user exhausts the allotted energy units. Additionally, the control unit features a user interface that displays power parameters such as power consumption, remaining units, and battery status.
 
-## Some PZEM-004T tests  
-A 250W bulb was used for testing the module. Measurements were validated using multimeters.   
-An M266C clamp meter was used to verify the AC current measured by the module and the results were satisfactory.   
-The images below summarize some of the experiments carried out.  
+# Features
+1. Energy unit allocation: The service provider inputs energy units into the control unit via a mobile interface to allocate them to users.
+2. Automatic power cutoff: When the user consumes all the allocated energy units, the control unit cuts off the power supply to the connected devices.
+3. Power parameter display: The user interface displays power consumption, remaining energy units, and battery status for easy monitoring.
+4. Mobile interface: The service provider can interact with the control unit through a mobile interface to allocate energy units.
+5. User-friendly interface: The control unit provides an intuitive and user-friendly interface for easy operation.
+6. Portable design: The control unit is designed to be portable, allowing it to be easily transported and used in various rental scenarios.
 
-## Clamp meter reading  
-![20221108_145014](https://user-images.githubusercontent.com/46250887/200606978-ec9ad4ff-383a-4403-84b7-8deb8e5aa558.jpg)  
-
-## PZEM-004T reading  
-![up](https://user-images.githubusercontent.com/46250887/200607558-3f0603e9-829e-4ac6-b11f-cf6b9b495a2e.jpg)  
-
+# Components Used
+1. Arduino Nano
+2. PZEM004T metering module
+3. 20x4 LCD
+4. HC-05 Bluetooth Module
+5. 5V Relay
+6. MIT App Inventor 
 
